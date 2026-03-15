@@ -8,7 +8,7 @@ let socket = null;
  */
 export const connectSocket = () => {
   if (!socket) {
-    socket = io("http://localhost:5000", {
+    socket = io("https://ers-backend-7bvq.onrender.com", {
       transports: ["websocket"], // force WebSocket for reliability
       reconnectionAttempts: 5,   // try 5 times on connection failure
       reconnectionDelay: 2000,   // wait 2s between attempts

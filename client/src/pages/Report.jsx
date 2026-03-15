@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { connectSocket } from "../socket";
 import LiveMap from "../components/LiveMap";
 
-const API = "http://localhost:5000";
+const API = "https://ers-backend-7bvq.onrender.com";
 
 function Report() {
   const navigate = useNavigate();

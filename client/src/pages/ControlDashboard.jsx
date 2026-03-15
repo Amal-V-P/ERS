@@ -5,7 +5,7 @@ import { connectSocket } from "../socket";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 
-const API = "http://localhost:5000";
+const API = "https://ers-backend-7bvq.onrender.com";
 
 /* ================= ICONS ================= */
 const userIcon = new L.Icon({

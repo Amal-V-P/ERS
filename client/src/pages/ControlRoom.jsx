@@ -22,7 +22,7 @@ function ControlRoom() {
   const assignResponder = async (report_id, responder_id) => {
     if (!responder_id) return;
     try {
-      await axios.post("http://localhost:5000/assign", { report_id, responder_id });
+      await axios.post("https://ers-backend-7bvq.onrender.com/assign", { report_id, responder_id });
       alert(`Assigned Responder ${responder_id} to report ${report_id}`);
     } catch (err) {
       console.error(err);

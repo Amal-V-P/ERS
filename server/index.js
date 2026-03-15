@@ -2,6 +2,7 @@
    ERS COMPLETE SERVER - FINAL STABLE BUILD
 ===================================================== */
 
+require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2/promise");
 const cors = require("cors");
@@ -11,7 +12,7 @@ const { Server } = require("socket.io");
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: true,
   credentials: true
 }));
 
@@ -19,11 +20,19 @@ app.use(express.json());
 
 /* ================= DATABASE ================= */
 
+// Support for both DATABASE_URL (standard for Render/Heroku) and individual DB variables
+const dbConfig = process.env.DATABASE_URL ? {
+  uri: process.env.DATABASE_URL
+} : {
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "00000000",
+  database: process.env.DB_NAME || "ers",
+  port: process.env.DB_PORT || 3306,
+};
+
 const db = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "00000000",
-  database: "ers",
+  ...dbConfig,
   waitForConnections: true,
   connectionLimit: 10,
 });
@@ -43,7 +52,10 @@ db.getConnection()
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: "http://localhost:5173" }
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
 });
 
 /* =====================================================
@@ -440,5 +452,5 @@ app.post("/complete",async(req,res)=>{
   res.json({success:true});
 });
 
-server.listen(5000,
- ()=>console.log("🚑 ERS SERVER RUNNING"));
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => console.log(`🚑 ERS SERVER RUNNING ON PORT ${PORT}`));

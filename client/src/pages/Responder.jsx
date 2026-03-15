@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { connectSocket, getSocket } from "../socket";
 
-const API = "http://localhost:5000";
+const API = "https://ers-backend-7bvq.onrender.com";
 
 function Responder() {
   const [assignment, setAssignment] = useState(null);
