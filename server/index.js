@@ -17,6 +17,12 @@ app.use(cors({
 }));
 
 app.use(express.json());
+/* =====================================================
+   Add root route
+===================================================== */
+app.get("/", (req, res) => {
+  res.send("🚑 ERS Backend Server Running");
+});
 
 /* ================= DATABASE ================= */
 
