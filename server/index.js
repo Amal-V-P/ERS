@@ -288,6 +288,31 @@ app.post("/assign", async (req, res) => {
 
 /* ================= ASSIGNMENT STATUS ================= */
 
+app.get("/active-assignment/:responderId", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        a.report_id,
+        a.status AS assignment_status,
+        r.user_id,
+        r.service_type,
+        r.location
+      FROM assignments a
+      JOIN reports r ON r.id = a.report_id
+      WHERE a.responder_id = ?
+      AND a.status IN ('pending', 'accepted')
+      ORDER BY a.created_at DESC
+      LIMIT 1
+    `, [req.params.responderId]);
+
+    if (rows.length === 0) return res.status(404).json(null);
+    res.json(rows[0]);
+  } catch (err) {
+    console.error("Active assignment error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 app.post("/assignment-status", async (req, res) => {
   const conn = await db.getConnection();
 
