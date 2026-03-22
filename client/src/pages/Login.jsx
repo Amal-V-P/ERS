@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { connectSocket } from "../socket";
 
-const API = "https://ers-backend-7bvq.onrender.com";
+const API = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 function Login() {
   const [name, setName] = useState("");

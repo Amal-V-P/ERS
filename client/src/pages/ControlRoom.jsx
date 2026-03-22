@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import socket from "../socket";
+import { connectSocket } from "../socket";
 import axios from "axios";
+
+const API = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 function ControlRoom() {
   const [reports, setReports] = useState([]);
 
   useEffect(() => {
+    const socket = connectSocket();
     socket.emit("joinControl", "Police"); // could be dynamic later
 
     const handleNewReport = (data) => {
@@ -22,7 +25,7 @@ function ControlRoom() {
   const assignResponder = async (report_id, responder_id) => {
     if (!responder_id) return;
     try {
-      await axios.post("https://ers-backend-7bvq.onrender.com/assign", { report_id, responder_id });
+      await axios.post(`${API}/assign`, { report_id, responder_id });
       alert(`Assigned Responder ${responder_id} to report ${report_id}`);
     } catch (err) {
       console.error(err);

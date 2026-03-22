@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { connectSocket, getSocket } from "../socket";
 
-const API = "https://ers-backend-7bvq.onrender.com";
+const API = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
 
 function Responder() {
   const [assignment, setAssignment] = useState(null);

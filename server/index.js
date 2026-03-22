@@ -30,24 +30,7 @@ app.get("/health", (req, res) => {
 
 /* ================= DATABASE ================= */
 
-const db = mysql.createPool({
-  host: mysql.railway.internal,
-  port: 21222,
-  user: root,
-  password: WTkZqdgEBFAHKdEZVOPIBSvNMOqzbZao,
-  database: ers,
-  waitForConnections: true,
-  connectionLimit: 10,
-});
-
-db.getConnection()
-  .then(conn => {
-    console.log("📂 Database Connected");
-    conn.release();
-  })
-  .catch(err => {
-    console.error("❌ Database Connection Failed:", err.message);
-  });
+const db = require("./db");
 
 /* ================= SERVER ================= */
 
@@ -161,6 +144,39 @@ app.get("/responders/:service", async (req, res) => {
 
     res.json(rows);
   } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+app.get("/active-report/:userId", async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT 
+        r.id,
+        r.user_id,
+        r.service_type,
+        r.status,
+        r.location,
+        a.responder_id,
+        res.name AS responder_name,
+        res.service_type AS res_service,
+        res.latitude AS res_lat,
+        res.longitude AS res_lng
+      FROM reports r
+      LEFT JOIN assignments a 
+        ON a.report_id = r.id AND a.status = 'accepted'
+      LEFT JOIN responders res 
+        ON res.id = a.responder_id
+      WHERE r.user_id = ?
+      AND r.status IN ('pending','assigned','accepted')
+      ORDER BY r.created_at DESC
+      LIMIT 1
+    `, [req.params.userId]);
+
+    res.json(rows[0] || null);
+
+  } catch (err) {
+    console.error("Active report error:", err);
     res.status(500).json({ error: "Server error" });
   }
 });

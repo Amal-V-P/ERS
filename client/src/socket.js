@@ -8,7 +8,8 @@ let socket = null;
  */
 export const connectSocket = () => {
   if (!socket) {
-    socket = io("https://ers-backend-7bvq.onrender.com", {
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+    socket = io(backendUrl, {
       transports: ["websocket"], // force WebSocket for reliability
       reconnectionAttempts: 5,   // try 5 times on connection failure
       reconnectionDelay: 2000,   // wait 2s between attempts
