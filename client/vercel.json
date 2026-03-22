@@ -1,4 +1,7 @@
 {
+  "env": {
+    "VITE_BACKEND_URL": "https://ers-backend-7bvq.onrender.com"
+  },
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
