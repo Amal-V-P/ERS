@@ -1,9 +1,13 @@
 {
-  "short_name": "MyApp",
-  "name": "My React PWA",
+  "short_name": "ERSApp",
+  "name": "ERS React PWA",
   "icons": [
-    { "src": "favicon-192x192.png", "type": "image/png", "sizes": "192x192" },
-    { "src": "favicon-512x512.png", "type": "image/png", "sizes": "512x512" }
+    {
+      "src": "vite.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
   ],
   "start_url": ".",
   "display": "standalone",
