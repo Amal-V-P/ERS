@@ -154,7 +154,7 @@ function ResponderDashboard() {
       </div>
 
       {assignment ? (
-        <div className="card" style={{ borderLeft: "5px solid var(--primary-color)" }}>
+        <div className="card card-info">
           <h3>Emergency Assigned</h3>
           <div style={{ textAlign: "left", marginBottom: 15 }}>
             <p><b>Report ID:</b> {assignment.reportId}</p>
@@ -163,7 +163,7 @@ function ResponderDashboard() {
           </div>
 
           {assignment.location && (
-            <div style={{ borderRadius: "8px", overflow: "hidden", marginBottom: "15px", border: "1px solid #ddd" }}>
+            <div className="card card-compact" style={{ marginBottom: "15px" }}>
               <LiveMap 
                 userLocation={assignment.location} 
                 responderLocation={currentLoc}

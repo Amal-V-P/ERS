@@ -49,7 +49,7 @@ function LiveMap({ userLocation, responderLocation }) {
     <MapContainer
       center={[userLocation.lat, userLocation.lng]}
       zoom={15}
-      style={{ height: 400, marginTop: 0 }}
+      className="leaflet-container"
     >
       <TileLayer
         attribution="© OpenStreetMap"

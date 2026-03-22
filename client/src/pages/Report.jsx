@@ -149,7 +149,7 @@ function Report() {
           {!userLocation.lat && <p style={{ color: "var(--primary-color)", fontSize: "0.9rem", marginTop: "10px" }}>📍 Waiting for GPS location...</p>}
         </div>
       ) : (
-        <div className="card" style={{ borderLeft: "5px solid #2a9d8f" }}>
+        <div className="card card-success">
           <h3>Help is on the way! ✅</h3>
           <div style={{ textAlign: "left", margin: "15px 0" }}>
             <p><b>Responder:</b> {assignedResponder.name}</p>
@@ -162,7 +162,7 @@ function Report() {
       )}
 
       {userLocation.lat && (
-        <div className="card" style={{ padding: 0, overflow: "hidden" }}>
+        <div className="card card-compact">
           <LiveMap
             userLocation={userLocation}
             responderLocation={responderLocation}
