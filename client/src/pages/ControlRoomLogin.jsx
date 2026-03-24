@@ -39,6 +39,12 @@ function ControlRoomLogin() {
       />
 
       <button onClick={login}>Access Dashboard</button>
+
+      <div style={{ marginTop: "2rem", display: "flex", gap: "1rem", justifyContent: "center" }}>
+        <a href="/" className="text-muted" style={{ textDecoration: "none" }}>User Login</a>
+        <span className="text-muted">|</span>
+        <a href="/responder" className="text-muted" style={{ textDecoration: "none" }}>Responder Login</a>
+      </div>
     </div>
   );
 }

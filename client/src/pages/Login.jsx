@@ -53,6 +53,12 @@ function Login() {
       >
         Login & Continue
       </button>
+
+      <div style={{ marginTop: "2rem", display: "flex", gap: "1rem", justifyContent: "center" }}>
+        <a href="/responder" className="text-muted" style={{ textDecoration: "none" }}>Responder Login</a>
+        <span className="text-muted">|</span>
+        <a href="/control-login" className="text-muted" style={{ textDecoration: "none" }}>Control Room</a>
+      </div>
     </div>
   );
 }
