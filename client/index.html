@@ -3,8 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ERS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <meta name="theme-color" content="#ef4444" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="/vite.svg" />
+    <script>
+      (function() {
+        var link = document.createElement('link');
+        link.rel = 'manifest';
+        if (window.location.pathname.startsWith('/responder')) {
+          link.href = '/manifest-responder.json';
+          document.title = 'ERS Responder';
+        } else {
+          link.href = '/manifest-user.json';
+          document.title = 'ERS User';
+        }
+        document.head.appendChild(link);
+      })();
+    </script>
+    <title>Emergency Response System</title>
   </head>
   <body>
     <div id="root"></div>

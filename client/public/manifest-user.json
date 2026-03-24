@@ -1,7 +1,7 @@
 {
-  "short_name": "ERS",
-  "name": "Emergency Response System",
-  "description": "Real-time emergency reporting and responder tracking system.",
+  "short_name": "ERS User",
+  "name": "ERS - Emergency Help",
+  "description": "Request emergency help instantly.",
   "icons": [
     {
       "src": "vite.svg",
@@ -14,5 +14,6 @@
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#ef4444",
-  "background_color": "#f8fafc"
+  "background_color": "#f8fafc",
+  "scope": "/"
 }

@@ -7,20 +7,21 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      registerType: 'autoUpdate', // automatically update service worker
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'ERS React PWA',
-        short_name: 'ERSApp',
-        start_url: '.',
+        name: 'Emergency Response System',
+        short_name: 'ERS',
+        description: 'Real-time emergency reporting and responder tracking system.',
+        theme_color: '#ef4444',
+        background_color: '#f8fafc',
         display: 'standalone',
-        theme_color: '#000000',
-        background_color: '#ffffff',
         icons: [
           {
             src: 'vite.svg',
             sizes: '192x192 512x512',
             type: 'image/svg+xml',
-            purpose: 'any'
+            purpose: 'any maskable'
           }
         ]
       }

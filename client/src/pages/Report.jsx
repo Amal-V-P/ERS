@@ -12,12 +12,32 @@ function Report() {
 
   const [service, setService] = useState("");
   const [reporting, setReporting] = useState(false);
-  const [assignedResponder, setAssignedResponder] = useState(null);
-  const [responderLocation, setResponderLocation] = useState(null);
+  const [activeReports, setActiveReports] = useState([]);
+  const [responderLocations, setResponderLocations] = useState({});
   const [userLocation, setUserLocation] = useState({ lat: null, lng: null });
+  const [showForm, setShowForm] = useState(false);
 
-  const assignedResponderRef = useRef(null);
   const watchIdRef = useRef(null);
+
+  const fetchActive = async () => {
+    try {
+      const res = await axios.get(`${API}/active-report/${user.id}`);
+      if (res.data) {
+        setActiveReports(res.data);
+        
+        // Initialize locations for those already accepted
+        const locs = {};
+        res.data.forEach(r => {
+          if (r.res_lat && r.res_lng) {
+            locs[r.responder_id] = { lat: Number(r.res_lat), lng: Number(r.res_lng) };
+          }
+        });
+        setResponderLocations(prev => ({ ...prev, ...locs }));
+      }
+    } catch (err) {
+      console.log("No active report found or server error");
+    }
+  };
 
   useEffect(() => {
     if (!user) {
@@ -28,29 +48,6 @@ function Report() {
     const socket = connectSocket();
     socket.emit("joinUser", user.id);
 
-    // Fetch existing active report
-    const fetchActive = async () => {
-      try {
-        const res = await axios.get(`${API}/active-report/${user.id}`);
-        if (res.data) {
-          const r = res.data;
-          if (r.responder_id && r.status === 'accepted') {
-            const responder = {
-              id: r.responder_id,
-              name: r.responder_name,
-              service_type: r.res_service
-            };
-            assignedResponderRef.current = responder;
-            setAssignedResponder(responder);
-            if (r.res_lat && r.res_lng) {
-              setResponderLocation({ lat: Number(r.res_lat), lng: Number(r.res_lng) });
-            }
-          }
-        }
-      } catch (err) {
-        console.log("No active report found or server error");
-      }
-    };
     fetchActive();
 
     if (navigator.geolocation) {
@@ -70,33 +67,22 @@ function Report() {
         (err) => console.error("GPS Error:", err),
         { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
       );
-    } else {
-      alert("Geolocation not supported");
     }
 
-    const handleEmergencyAccepted = (data) => {
-      assignedResponderRef.current = data.responder;
-      setAssignedResponder(data.responder);
-
-      if (data.responder.latitude && data.responder.longitude) {
-        setResponderLocation({
-          lat: Number(data.responder.latitude),
-          lng: Number(data.responder.longitude),
-        });
-      }
+    const handleEmergencyAccepted = () => {
+      fetchActive();
     };
 
     const handleLiveLocation = (data) => {
-      if (
-        assignedResponderRef.current &&
-        data.responderId === assignedResponderRef.current.id
-      ) {
-        setResponderLocation({ lat: Number(data.lat), lng: Number(data.lng) });
-      }
+      setResponderLocations((prev) => ({
+        ...prev,
+        [data.responderId]: { lat: Number(data.lat), lng: Number(data.lng) },
+      }));
     };
 
     socket.on("emergencyAccepted", handleEmergencyAccepted);
     socket.on("liveResponderLocation", handleLiveLocation);
+    socket.on("newReport", () => fetchActive()); // Refresh on any new report (could be from another tab)
 
     return () => {
       socket.off("emergencyAccepted", handleEmergencyAccepted);
@@ -114,6 +100,9 @@ function Report() {
       const loc = { lat: userLocation.lat, lng: userLocation.lng };
       await axios.post(`${API}/request`, { user_id: user.id, service_type: service, location: loc });
       alert("🚨 Emergency Reported!");
+      setShowForm(false);
+      setService("");
+      fetchActive();
     } catch (err) {
       console.error(err);
       alert("Failed to report emergency");
@@ -124,11 +113,20 @@ function Report() {
 
   return (
     <div className="dashboard-container">
-      <h2>🚨 Emergency Report Center</h2>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+        <h2>🚨 Emergency Center</h2>
+        <button 
+          onClick={() => setShowForm(!showForm)} 
+          style={{ width: "auto", marginTop: 0, padding: "8px 16px", backgroundColor: showForm ? "var(--text-muted)" : "var(--primary)" }}
+        >
+          {showForm ? "Cancel" : "New Emergency"}
+        </button>
+      </div>
 
-      {!assignedResponder ? (
-        <div className="card">
-          <p>Please select the type of emergency service you need and provide your location permission to get help as fast as possible.</p>
+      {(showForm || activeReports.length === 0) && (
+        <div className="card card-warning">
+          <h3>Request New Help</h3>
+          <p className="text-muted">Select the type of emergency service you need.</p>
           <select
             value={service}
             onChange={(e) => setService(e.target.value)}
@@ -143,32 +141,40 @@ function Report() {
             disabled={!service || reporting || !userLocation.lat}
             onClick={reportEmergency}
           >
-            {reporting ? "🚀 Dispatching Help..." : "🆘 Request Emergency Help"}
+            {reporting ? "🚀 Dispatching..." : "🆘 Request Help Now"}
           </button>
           
-          {!userLocation.lat && <p style={{ color: "var(--primary-color)", fontSize: "0.9rem", marginTop: "10px" }}>📍 Waiting for GPS location...</p>}
-        </div>
-      ) : (
-        <div className="card card-success">
-          <h3>Help is on the way! ✅</h3>
-          <div style={{ textAlign: "left", margin: "15px 0" }}>
-            <p><b>Responder:</b> {assignedResponder.name}</p>
-            <p><b>Service Type:</b> <span className="status-badge status-assigned">{assignedResponder.service_type}</span></p>
-            {responderLocation && (
-              <p><b>Status:</b> <span className="status-badge status-accepted">Live Tracking Active</span></p>
-            )}
-          </div>
+          {!userLocation.lat && <p className="text-muted" style={{ color: "var(--primary)", marginTop: "10px" }}>📍 Waiting for GPS location...</p>}
         </div>
       )}
 
-      {userLocation.lat && (
-        <div className="card card-compact">
-          <LiveMap
-            userLocation={userLocation}
-            responderLocation={responderLocation}
-          />
+      {activeReports.map((report) => (
+        <div key={report.id} className={`card ${report.status === 'accepted' ? 'card-success' : 'card-info'}`}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+            <div>
+              <h3>{report.service_type.toUpperCase()} - {report.status}</h3>
+              <p className="text-muted">Report ID: #{report.id}</p>
+            </div>
+            <span className={`status-badge status-${report.status.toLowerCase()}`}>{report.status}</span>
+          </div>
+
+          {report.responder_id ? (
+            <div style={{ textAlign: "left", margin: "15px 0" }}>
+              <p><b>Responder:</b> {report.responder_name}</p>
+              {responderLocations[report.responder_id] && (
+                <div className="card card-compact" style={{ marginTop: "15px" }}>
+                  <LiveMap
+                    userLocation={userLocation}
+                    responderLocation={responderLocations[report.responder_id]}
+                  />
+                </div>
+              )}
+            </div>
+          ) : (
+            <p style={{ marginTop: "15px" }}>Waiting for a responder to be assigned...</p>
+          )}
         </div>
-      )}
+      ))}
     </div>
   );
 }

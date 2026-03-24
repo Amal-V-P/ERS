@@ -170,10 +170,9 @@ app.get("/active-report/:userId", async (req, res) => {
       WHERE r.user_id = ?
       AND r.status IN ('pending','assigned','accepted')
       ORDER BY r.created_at DESC
-      LIMIT 1
     `, [req.params.userId]);
 
-    res.json(rows[0] || null);
+    res.json(rows);
 
   } catch (err) {
     console.error("Active report error:", err);

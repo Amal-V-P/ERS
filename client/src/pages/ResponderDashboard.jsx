@@ -17,7 +17,7 @@ function ResponderDashboard() {
 
   useEffect(() => {
     if (!responder) {
-      navigate("/responder-login");
+      navigate("/responder");
       return;
     }
 

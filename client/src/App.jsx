@@ -14,8 +14,8 @@ function App() {
         <Route path="/control-login" element={<ControlRoomLogin />} />
         <Route path="/control-dashboard" element={<ControlDashboard />} />
         <Route path="/report" element={<Report />} />
-        <Route path="/responder-login" element={<ResponderLogin />} />
-        <Route path="/responder-dashboard" element={<ResponderDashboard />} />
+        <Route path="/responder" element={<ResponderLogin />} />
+        <Route path="/responder/dashboard" element={<ResponderDashboard />} />
         <Route path="*" element={<h2>Page Not Found</h2>} />
       </Routes>
     </BrowserRouter>

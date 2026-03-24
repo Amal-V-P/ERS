@@ -20,7 +20,7 @@ function ResponderLogin() {
     const socket = getSocket();
     socket.emit("joinResponder", responder.id);
 
-    navigate("/responder-dashboard");
+    navigate("/responder/dashboard");
   };
 
   return (
